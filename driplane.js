@@ -1,7 +1,7 @@
-const script = document.querySelector('script[data-driplane]');
+const script = document.querySelector('script[data-driplane-auth]');
 let config = {
-  server: 'https://driplane.io',
-  auth: ''
+  driplaneServer: 'https://driplane.io',
+  driplaneToken: ''
 };
 
 if (script) {
@@ -12,14 +12,14 @@ if (script) {
   // const baseUrl = script.src.split('/').slice(0, -1).join('/');
 }
 
-if (!config.auth) {
+if (!config.driplaneToken) {
   console.warn('Missing token for Driplane!');
 }
 
 const headers = new Headers();
 
 headers.append('Content-Type', 'application/json');
-headers.append('Authorization', `Basic ${config.auth}`);
+headers.append('Authorization', `Basic ${config.driplaneToken}`);
 
 const commonTags = {
   ua: navigator.userAgent,
@@ -29,7 +29,7 @@ const commonTags = {
   sw: screen.width
 };
 
-fetch(`${config.server}/events/page_view`, {
+fetch(`${config.driplaneServer}/events/page_view`, {
   method: 'POST',
   headers,
   body: JSON.stringify({
