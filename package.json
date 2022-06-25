@@ -7,7 +7,6 @@
     "access": "public"
   },
   "scripts": {
-    "build": "esbuild driplane.ts --bundle --minify --sourcemap --outfile=driplane.js",
     "test": "jest"
   },
   "repository": {
@@ -25,7 +24,6 @@
     "@semantic-release/github": "^8.0.4",
     "@semantic-release/npm": "^9.0.1",
     "@semantic-release/release-notes-generator": "^10.0.3",
-    "esbuild": "^0.14.47",
     "semantic-release": "^19.0.3"
   }
 }
