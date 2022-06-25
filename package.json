@@ -1,0 +1,26 @@
+{
+  "name": "@driplane/web",
+  "version": "0.0.0-dev",
+  "description": "Driplane web tracker",
+  "main": "driplane.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/driplane/web-tracker.git"
+  },
+  "author": "Driplane",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/driplane/web-tracker/issues"
+  },
+  "homepage": "https://github.com/driplane/web-tracker#readme",
+  "devDependencies": {
+    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/github": "^8.0.4",
+    "@semantic-release/npm": "^9.0.1",
+    "@semantic-release/release-notes-generator": "^10.0.3",
+    "semantic-release": "^19.0.3"
+  }
+}

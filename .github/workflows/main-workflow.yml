@@ -1,0 +1,12 @@
+name: Main Workflow
+
+on:
+  push:
+    branches:
+      - next
+
+jobs:
+  release:
+    uses: driplane/web-tracker/.github/workflows/release.yml@next
+    needs: verify
+    secrets: inherit
