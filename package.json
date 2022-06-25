@@ -3,6 +3,9 @@
   "version": "0.0.0-dev",
   "description": "Driplane web tracker",
   "main": "driplane.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "jest"
   },
