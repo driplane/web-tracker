@@ -8,5 +8,4 @@ on:
 jobs:
   release:
     uses: driplane/web-tracker/.github/workflows/release.yml@next
-    needs: verify
     secrets: inherit
