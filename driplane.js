@@ -1,4 +1,4 @@
-const script = document.querySelector('script[data-driplane-auth]');
+const script = document.querySelector('script[data-driplane-token]');
 let config = {
   driplaneServer: 'https://driplane.io',
   driplaneToken: ''
@@ -25,8 +25,8 @@ const commonTags = {
   ua: navigator.userAgent,
   url: location.href,
   lang: navigator.language,
-  sh: screen.height,
-  sw: screen.width
+  sh: `${screen.height}`,
+  sw: `${screen.width}`
 };
 
 fetch(`${config.driplaneServer}/events/page_view`, {
