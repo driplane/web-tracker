@@ -18,8 +18,10 @@ if (!config.driplaneToken) {
 
 const headers = new Headers();
 
+const token = btoa(`${config.driplaneToken}:`);
+
 headers.append('Content-Type', 'application/json');
-headers.append('Authorization', `Basic ${config.driplaneToken}`);
+headers.append('Authorization', `Basic ${token}`);
 
 const commonTags = {
   ua: navigator.userAgent,
