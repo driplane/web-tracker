@@ -2,12 +2,14 @@
   "name": "@driplane/web",
   "version": "0.0.0-dev",
   "description": "Driplane web tracker",
-  "main": "driplane.js",
+  "main": "./dist/driplane.js",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "esbuild src/driplane.ts --bundle --minify --splitting --format=esm --outdir=dist",
+    "serve": "esbuild src/driplane.ts --bundle --splitting --format=esm --servedir=demo"
   },
   "repository": {
     "type": "git",
@@ -24,9 +26,12 @@
     "@semantic-release/github": "^8.0.4",
     "@semantic-release/npm": "^9.0.1",
     "@semantic-release/release-notes-generator": "^10.0.3",
+    "@types/ua-parser-js": "^0.7.36",
+    "esbuild": "^0.14.49",
     "semantic-release": "^19.0.3"
   },
   "dependencies": {
+    "ua-parser-js": "^1.0.2",
     "uuid": "^8.3.2"
   }
 }

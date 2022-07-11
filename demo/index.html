@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <input id="token"><button id="setToken">Set Token</button>
+
+  <button id="trackPV">Track PageView</button>
+  <script type="module">
+    import { setToken, trackPageview } from './driplane.js';
+
+    document.getElementById('setToken').addEventListener('click', (ev) => {
+      setToken(document.getElementById('token').value);
+    })
+    document.getElementById('trackPV').addEventListener('click', () => {
+      trackPageview();
+    })
+  </script>
+
+  <a href="./auto-track.html">Auto tracking example</a>
+</body>
+</html>
