@@ -19,29 +19,34 @@ export const setToken = (driplaneToken) => {
 }
 
 export const trackEvent = async (event, tags = {}) => {
-  const url = parseUrl(location.href);
-  const ref = document.referrer ? parseUrl(document.referrer) : '';
+  const { href: url, host: url_host, pathname: url_path, protocol: url_prot } = parseUrl(location.href);
+  const { href: ref, host: ref_host } = document.referrer ? parseUrl(document.referrer) : { href: '', host: ''};
 
   const { getClientId } = await import('./client-id');
+  const cid = await getClientId();
+
+  const { name: ua_br, version: ua_br_v } = ua.getBrowser();
+  const { name: ua_os, version: ua_os_v } = ua.getOS();
+  const { model: ua_dv, type: ua_dv_t } = ua.getDevice();
   
   const commonTags = {
-    ua_br: ua.getBrowser().name,
-    ua_br_v: ua.getBrowser().version,
-    ua_os: ua.getOS().name,
-    ua_os_v: ua.getOS().version,
-    ua_dv: ua.getDevice().model,
-    ua_dv_t: ua.getDevice().type,
+    ua_br,
+    ua_br_v,
+    ua_os,
+    ua_os_v,
+    ua_dv,
+    ua_dv_t,
     url,
-    url_host: url.host,
-    url_path: url.pathname,
-    url_prot: url.protocol,
+    url_host,
+    url_path,
+    url_prot,
     lang: navigator.language,
     sh: `${screen.height}`,
     sw: `${screen.width}`,
     ref,
-    ref_host: ref ? ref.host : '',
-    ref_ext: ref && url.host !== ref.host ? 1 : 0,
-    cid: await getClientId()
+    ref_host,
+    ref_ext: url_host !== ref_host ? 1 : 0,
+    cid
   };
 
   return fetch(`${driplaneServer}/events/${event}`, {
