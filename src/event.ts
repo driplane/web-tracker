@@ -40,6 +40,7 @@ export const trackEvent = async (event, tags = {}) => {
     sw: `${screen.width}`,
     ref,
     ref_host: ref ? ref.host : '',
+    ref_ext: ref && url.host !== ref.host ? 1 : 0,
     cid: await getClientId()
   };
 
