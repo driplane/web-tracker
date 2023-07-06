@@ -1,4 +1,4 @@
-import { setToken, trackPageview } from './event';
+import { setToken, setServer, trackEvent, trackPageview } from './event';
 
 const script = document?.querySelector<HTMLElement>('script[data-driplane-token]');
 
@@ -9,4 +9,4 @@ if (script?.dataset.driplaneToken) {
   console.warn('[Driplane] No token given');
 }
 
-export { setToken, trackPageview };
+export { setToken, setServer, trackEvent, trackPageview };
