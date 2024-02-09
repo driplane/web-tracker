@@ -7,7 +7,7 @@ headers.append('Content-Type', 'application/json');
 
 const parseUrl = (url) => new URL(url);
 
-let driplaneServer = 'https://driplane.io';
+let driplaneServer = 'https://data.driplane.io';
 
 export const setServer = (server) => {
   driplaneServer = server;
@@ -29,6 +29,8 @@ export const trackEvent = async (event, tags = {}) => {
   const { name: ua_os, version: ua_os_v } = ua.getOS();
   const { model: ua_dv, type: ua_dv_t } = ua.getDevice();
   
+  const { width: sw, height: sh } = screen;
+
   const commonTags = {
     ua_br,
     ua_br_v,
@@ -41,8 +43,8 @@ export const trackEvent = async (event, tags = {}) => {
     url_path,
     url_prot,
     lang: navigator.language,
-    sh: `${screen.height}`,
-    sw: `${screen.width}`,
+    sh,
+    sw,
     ref,
     ref_host,
     ref_ext: url_host !== ref_host ? 1 : 0,
