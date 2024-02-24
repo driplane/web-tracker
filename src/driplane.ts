@@ -13,6 +13,4 @@ if (script?.dataset.driplaneToken) {
   console.warn('[Driplane] No token given');
 }
 
-console.log(import.meta);
-
 export { setToken, setServer, trackEvent, trackPageview };
