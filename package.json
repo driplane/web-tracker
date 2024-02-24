@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "esbuild src/driplane.ts --bundle --minify --splitting --format=esm --outdir=dist",
+    "build": "esbuild src/driplane.ts --bundle --minify --format=esm --outdir=dist",
     "serve": "esbuild src/driplane.ts --bundle --splitting --format=esm --servedir=demo"
   },
   "repository": {
@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "ua-parser-js": "^1.0.2",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "web-vitals": "^3.5.2"
   }
 }

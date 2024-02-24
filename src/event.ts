@@ -1,22 +1,41 @@
 import UAParser from 'ua-parser-js';
+import { onCLS, onFCP, onFID, onINP, onLCP, onTTFB } from 'web-vitals';
 
 const ua = new UAParser();
-
-const headers = new Headers();
-headers.append('Content-Type', 'application/json');
 
 const parseUrl = (url) => new URL(url);
 
 let driplaneServer = 'https://data.driplane.io';
+let token;
 
 export const setServer = (server) => {
   driplaneServer = server;
 }
 
 export const setToken = (driplaneToken) => {
-  const token = window.btoa(`${driplaneToken}:`);
-  headers.set('Authorization', `Basic ${token}`);
+  token = window.btoa(`${driplaneToken}:`);
 }
+
+const webVitals: {
+  cls?: number,
+  fcp?: number,
+  fid?: number,
+  lcp?: number,
+  ttfb?: number,
+  inp?: number,
+} = {};
+
+const setVital = (name) => ({ delta }) => webVitals[name] = ~~delta;
+
+onCLS(setVital('cls'));
+onFCP(setVital('fcp'));
+onFID(setVital('fid'));
+onLCP(setVital('lcp'));
+onTTFB(setVital('ttfb'));
+onINP(setVital('inp'));
+
+// const eventQueue: {event:string, body: string}[] = [];
+const eventQueue = new Set<{event:string, body: Object}>();
 
 export const trackEvent = async (event, tags = {}) => {
   const { href: url, host: url_host, pathname: url_path, protocol: url_prot } = parseUrl(location.href);
@@ -48,17 +67,51 @@ export const trackEvent = async (event, tags = {}) => {
     ref,
     ref_host,
     ref_ext: url_host !== ref_host ? 1 : 0,
-    cid
+    cid,
   };
 
-  return fetch(`${driplaneServer}/events/${event}`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      ...commonTags,
-      ...tags
-    })
-  });
+  const body = {
+    ...commonTags,
+    ...tags
+  };
+
+  eventQueue.add({ event, body });
 }
 
 export const trackPageview = async (tags = {}) => trackEvent('page_view', tags);
+
+function flushQueue() {
+  if (eventQueue.size > 0) {
+    eventQueue.forEach(({ event, body }) => {
+      const endpoint = `${driplaneServer}/events/${event}`;
+
+      // add web vitals to the event
+      Object.assign(body, webVitals);
+      
+      // TODO: use navigator.sendBeacon() once it's possible to set token as query param
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.set('Authorization', `Basic ${token}`);
+    
+      fetch(endpoint, {
+        method: 'POST',
+        keepalive: true,
+        headers,
+        body: JSON.stringify(body),
+      });
+    });
+
+    eventQueue.clear();
+  }
+}
+
+// Report all available metrics whenever the page is backgrounded or unloaded.
+addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    flushQueue();
+  }
+});
+
+// NOTE: Safari does not reliably fire the `visibilitychange` event when the
+// page is being unloaded. As a workaround, we also listen for `pagehide`.
+addEventListener('pagehide', flushQueue);
