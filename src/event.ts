@@ -25,9 +25,9 @@ const webVitals: {
   inp?: number,
 } = {};
 
-const setVital = (name) => ({ delta }) => webVitals[name] = ~~delta;
+const setVital = (name, multiplier = 1) => ({ delta }) => webVitals[name] = ~~(delta * multiplier);
 
-onCLS(setVital('cls'));
+onCLS(setVital('cls', 10000));
 onFCP(setVital('fcp'));
 onFID(setVital('fid'));
 onLCP(setVital('lcp'));
