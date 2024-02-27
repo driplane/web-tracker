@@ -13,7 +13,7 @@ export const setServer = (server) => {
 }
 
 export const setToken = (driplaneToken) => {
-  token = window.btoa(`${driplaneToken}:`);
+  token = driplaneToken;
 }
 
 const webVitals: {
@@ -68,6 +68,7 @@ export const trackEvent = async (event, tags = {}) => {
     ref_host,
     ref_ext: url_host !== ref_host ? 1 : 0,
     cid,
+    beacon: 0,
   };
 
   const body = {
@@ -80,25 +81,35 @@ export const trackEvent = async (event, tags = {}) => {
 
 export const trackPageview = async (tags = {}) => trackEvent('page_view', tags);
 
+const sendBeacon = (endpoint, body) => {
+  Object.assign(body, { beacon: 1 });
+
+  const blob = new Blob([JSON.stringify(body)], { type: "application/json" });
+
+  return navigator.sendBeacon(endpoint, blob);
+}
+
+const sendXhr = (endpoint, body) => {
+  const headers = new Headers();
+  headers.append('Content-Type', 'application/json');
+
+  return fetch(endpoint, {
+    method: 'POST',
+    keepalive: true,
+    headers,
+    body: JSON.stringify(body)
+  });
+}
+
 function flushQueue() {
   if (eventQueue.size > 0) {
     eventQueue.forEach(({ event, body }) => {
-      const endpoint = `${driplaneServer}/events/${event}`;
+      const endpoint = `${driplaneServer}/events/${event}?api_key=${token}`;
 
       // add web vitals to the event
       Object.assign(body, webVitals);
-      
-      // TODO: use navigator.sendBeacon() once it's possible to set token as query param
-      const headers = new Headers();
-      headers.append('Content-Type', 'application/json');
-      headers.set('Authorization', `Basic ${token}`);
-    
-      fetch(endpoint, {
-        method: 'POST',
-        keepalive: true,
-        headers,
-        body: JSON.stringify(body),
-      });
+
+      ('sendBeacon' in navigator && sendBeacon(endpoint, body)) || sendXhr(endpoint, body);
     });
 
     eventQueue.clear();
