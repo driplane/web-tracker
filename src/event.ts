@@ -42,7 +42,7 @@ export const trackEvent = async (event, tags = {}) => {
   const { href: ref, host: ref_host } = document.referrer ? parseUrl(document.referrer) : { href: '', host: ''};
 
   const { getClientId } = await import('./client-id');
-  const cid = await getClientId();
+  const [ cid, cid_st ] = await getClientId();
 
   const { name: ua_br, version: ua_br_v } = ua.getBrowser();
   const { name: ua_os, version: ua_os_v } = ua.getOS();
@@ -68,6 +68,7 @@ export const trackEvent = async (event, tags = {}) => {
     ref_host,
     ref_ext: url_host !== ref_host ? 1 : 0,
     cid,
+    cid_st,
     beacon: 0,
   };
 

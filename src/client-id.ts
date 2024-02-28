@@ -14,12 +14,12 @@ function isLocalStorageAvailable(){
 export const getClientId = async () => {
   // Check doNotTrack
   if (navigator.doNotTrack === '1') {
-    return '0';
+    return ['0', 'dnt']; // Do Not Track
   }
 
   // check if localStorage is available
   if (!isLocalStorageAvailable()) {
-    return '0';
+    return ['0', 'nls']; // No LocalStorage
   }
 
   let clientId = localStorage.getItem(clientIdKey);
@@ -35,9 +35,9 @@ export const getClientId = async () => {
     } catch (error) {
       console.error('[Driplane] Error loading UUID module:', error);
 
-      return '0';
+      return ['0', 'mle']; // Module load error
     }
   }
 
-  return clientId;
+  return [clientId, 'ok'];
 };
