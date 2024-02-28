@@ -1,6 +1,27 @@
 export const clientIdKey = '__drcid';
 
+function isLocalStorageAvailable(){
+  var test = 'test';
+  try {
+      localStorage.setItem(test, test);
+      localStorage.removeItem(test);
+      return true;
+  } catch(e) {
+      return false;
+  }
+}
+
 export const getClientId = async () => {
+  // Check doNotTrack
+  if (navigator.doNotTrack === '1') {
+    return '0';
+  }
+
+  // check if localStorage is available
+  if (!isLocalStorageAvailable()) {
+    return '0';
+  }
+
   let clientId = localStorage.getItem(clientIdKey);
 
   if (!clientId) {
