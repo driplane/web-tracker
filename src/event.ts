@@ -44,10 +44,12 @@ export const trackEvent = async (event, tags = {}) => {
   const { getClientId } = await import('./client-id');
   const [ cid, cid_st ] = await getClientId();
 
-  const { name: ua_br, version: ua_br_v } = ua.getBrowser();
-  const { name: ua_os, version: ua_os_v } = ua.getOS();
-  const { model: ua_dv, type: ua_dv_t } = ua.getDevice();
-  
+  const {
+    browser: { name: ua_br, version: ua_br_v },
+    os: { name: ua_os, version: ua_os_v },
+    device: { model: ua_dv, type: ua_dv_t = 'desktop', vendor: ua_dv_v }
+  } = ua.getResult();
+
   const { width: sw, height: sh } = screen;
 
   const commonTags = {
@@ -57,6 +59,7 @@ export const trackEvent = async (event, tags = {}) => {
     ua_os_v,
     ua_dv,
     ua_dv_t,
+    ua_dv_v,
     url,
     url_host,
     url_path,
