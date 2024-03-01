@@ -7,11 +7,25 @@
   <title>Document</title>
 </head>
 <body>
-  <p>This page examples auto pageview tracking</p>
+  <p>This page examples auto pageview tracking. <a href="">Refresh</a></p>
 
   <script type="module"
   data-driplane-server="https://beta-api.driplane.io"
   data-driplane-token="WQpV78AuQrlIxNTxXE3wrulogEgr6KweLRpRlTGqz9L"
   src="./driplane.js"></script>
+
+
+  <script type="module"
+  data-driplane-server="https://dev-api.driplane.io"
+  data-driplane-token="testing-1-2-3-4"
+  src="./driplane.js"></script>
+
+  <script type="module">
+    import { init } from './driplane.js';
+
+    init('testing').trackPageview();
+  </script>
+
+
 </body>
 </html>

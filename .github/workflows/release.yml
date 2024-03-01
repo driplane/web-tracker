@@ -24,3 +24,5 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Purge CDN Cache
+        run: curl -X GET "https://purge.jsdelivr.net/npm/@driplane/web@beta/dist/driplane.js"

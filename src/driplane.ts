@@ -1,16 +1,13 @@
-import { setToken, setServer, trackEvent, trackPageview } from './event';
+import { init } from './event';
 
-const script = document?.querySelector<HTMLElement>('script[data-driplane-token]');
+const scripts = document?.querySelectorAll<HTMLElement>('script[data-driplane-token]');
+scripts?.forEach((script) => {
+  const { driplaneServer, driplaneToken } = script?.dataset;
 
-if (script?.dataset.driplaneServer) {
-  setServer(script?.dataset.driplaneServer);
-}
+  if (driplaneToken) {
+    const { trackPageview } = init(driplaneToken, driplaneServer);
+    trackPageview();
+  }
+});
 
-if (script?.dataset.driplaneToken) {
-  setToken(script?.dataset.driplaneToken);
-  trackPageview();
-} else {
-  console.warn('[Driplane] No token given');
-}
-
-export { setToken, setServer, trackEvent, trackPageview };
+export { init };

@@ -22,13 +22,13 @@
   },
   "homepage": "https://github.com/driplane/web-tracker#readme",
   "devDependencies": {
-    "@semantic-release/commit-analyzer": "^9.0.2",
-    "@semantic-release/github": "^8.0.4",
-    "@semantic-release/npm": "^9.0.1",
-    "@semantic-release/release-notes-generator": "^10.0.3",
+    "@semantic-release/commit-analyzer": "^11.1.0",
+    "@semantic-release/github": "^9.2.6",
+    "@semantic-release/npm": "^11.0.2",
+    "@semantic-release/release-notes-generator": "^12.1.0",
     "@types/ua-parser-js": "^0.7.39",
-    "esbuild": "^0.14.49",
-    "semantic-release": "^19.0.3"
+    "esbuild": "^0.20.1",
+    "semantic-release": "^23.0.2"
   },
   "dependencies": {
     "ua-parser-js": "^1.0.37",

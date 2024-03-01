@@ -7,18 +7,29 @@
   <title>Document</title>
 </head>
 <body>
-  <input id="token"><button id="setToken">Set Token</button>
+  <input id="token" placeholder="Your Token">
+  <input id="server" placeholder="https://data.driplane.io">
+  <button id="setToken">Set Config</button>
 
   <button id="trackPV">Track PageView</button>
   <script type="module">
-    import { setToken, trackPageview } from './driplane.js';
+    import { init } from './driplane.js';
+
+    let trackPageview = () => console.warn('set credentials first');
+
+    document.getElementById('setServer').addEventListener('click', (ev) => {
+      setServer(document.getElementById('server').value);
+    })
 
     document.getElementById('setToken').addEventListener('click', (ev) => {
-      setToken(document.getElementById('token').value);
+      trackPageview = (document.getElementById('token').value, document.getElementById('server').value).trackPageview;
     })
+
     document.getElementById('trackPV').addEventListener('click', () => {
       trackPageview();
+      console.log('Pageview track queued.');
     })
+
   </script>
 
   <a href="./auto-track.html">Auto tracking example</a>

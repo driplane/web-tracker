@@ -15,3 +15,20 @@ Just import library to your page by setting your project token
     type="module"
 ></script>
 ```
+
+Send page view event programmatically:
+
+```html
+<script type="module">
+  import { init } from "https://cdn.jsdelivr.net/npm/@driplane/web@beta/driplane.js";
+
+  const { trackPageview } = init('yourToken');
+
+  window.addEventListener("popstate", (event) => {
+    trackPageview();
+
+    // Optionally you can add tags to pageview events like
+    // trackPageview({ loggedin: '1'});
+  });
+</script>
+```
