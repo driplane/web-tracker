@@ -1,29 +1,11 @@
 import UAParser from 'ua-parser-js';
-import { onCLS, onFCP, onFID, onINP, onLCP, onTTFB } from 'web-vitals';
 
 const ua = new UAParser();
 
 const parseUrl = (url) => new URL(url);
 
 const defaultDriplaneServer = 'https://data.driplane.io';
-
-const webVitals: {
-  cls?: number,
-  fcp?: number,
-  fid?: number,
-  lcp?: number,
-  ttfb?: number,
-  inp?: number,
-} = {};
-
-const setVital = (name, multiplier = 1) => ({ delta }) => webVitals[name] = ~~(delta * multiplier);
-
-onCLS(setVital('cls', 10000));
-onFCP(setVital('fcp'));
-onFID(setVital('fid'));
-onLCP(setVital('lcp'));
-onTTFB(setVital('ttfb'));
-onINP(setVital('inp'));
+const CONTENT_TYPE = 'text/plain';
 
 const eventQueue = new Set<{endpoint: string, event:string, body: Object}>();
 
@@ -36,7 +18,11 @@ class Driplane {
     this.server = server;
   }
   
-  async trackEvent(event, tags = {}) {
+  async trackEvent(event, tags: (() => object) | object = {}) {
+    if (typeof tags === 'function') {
+      tags = await tags();
+    }
+
     const { href: url, host: url_host, pathname: url_path, protocol: url_prot } = parseUrl(location.href);
     const { href: ref, host: ref_host } = document.referrer ? parseUrl(document.referrer) : { href: '', host: ''};
 
@@ -91,21 +77,26 @@ class Driplane {
 }
 
 const sendBeacon = (endpoint, body) => {
-  Object.assign(body, { beacon: 1 });
+  if (window &&
+      window.navigator &&
+      typeof window.navigator.sendBeacon === "function" &&
+      typeof window.Blob === "function") {
 
-  const blob = new Blob([JSON.stringify(body)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ ...body, beacon: 1 })], { type: CONTENT_TYPE });
 
-  return navigator.sendBeacon(endpoint, blob);
+    return navigator.sendBeacon(endpoint, blob);
+  }
+
+  return false;
 }
 
 const sendXhr = (endpoint, body) => {
-  const headers = new Headers();
-  headers.append('Content-Type', 'application/json');
-
   return fetch(endpoint, {
     method: 'POST',
     keepalive: true,
-    headers,
+    headers: {
+      'Content-Type': CONTENT_TYPE
+    },
     body: JSON.stringify(body)
   });
 }
@@ -113,10 +104,7 @@ const sendXhr = (endpoint, body) => {
 function flushQueue() {
   if (eventQueue.size > 0) {
     eventQueue.forEach(({ endpoint, event, body }) => {
-      // add web vitals to the event
-      Object.assign(body, webVitals);
-
-      ('sendBeacon' in navigator && sendBeacon(endpoint, body)) || sendXhr(endpoint, body);
+      sendBeacon(endpoint, body) || sendXhr(endpoint, body);
     });
 
     eventQueue.clear();
@@ -140,6 +128,8 @@ export const init = function (token: string, server = defaultDriplaneServer) {
   return {
     trackPageview: (tags = {}) => {
       driplane.trackPageview(tags);
+      // Send pageview events immediately
+      flushQueue();
     },
     trackEvent: (event, tags = {}) => {
       driplane.trackEvent(event, tags);
