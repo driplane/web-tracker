@@ -71,7 +71,7 @@ class Driplane {
   }
 
   async trackPageview(tags = {}) {
-    this.trackEvent('page_view', tags);
+    await this.trackEvent('page_view', tags);
   }
 
 }
