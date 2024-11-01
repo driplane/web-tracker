@@ -131,8 +131,8 @@ export const init = function (token: string, server = defaultDriplaneServer) {
       // Send pageview events immediately
       flushQueue();
     },
-    trackEvent: (event, tags = {}) => {
-      driplane.trackEvent(event, tags);
+    trackEvent: async (event, tags = {}) => {
+      await driplane.trackEvent(event, tags);
     }
   }
 }
