@@ -126,8 +126,8 @@ addEventListener('pagehide', flushQueue);
 export const init = function (token: string, server = defaultDriplaneServer) {
   const driplane = new Driplane(token, server);
   return {
-    trackPageview: (tags = {}) => {
-      driplane.trackPageview(tags);
+    trackPageview: async (tags = {}) => {
+      await driplane.trackPageview(tags);
       // Send pageview events immediately
       flushQueue();
     },
