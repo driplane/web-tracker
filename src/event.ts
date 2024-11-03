@@ -7,7 +7,7 @@ const parseUrl = (url) => new URL(url);
 const defaultDriplaneServer = 'https://data.driplane.io';
 const CONTENT_TYPE = 'text/plain';
 
-const eventQueue = new Set<{endpoint: string, event:string, body: Object}>();
+const eventQueue = new Set<{endpoint: string, event:string, body: Object, lazyTags: () => object}>();
 
 class Driplane {
   server: string;
@@ -19,10 +19,6 @@ class Driplane {
   }
   
   async trackEvent(event, tags: (() => object) | object = {}) {
-    if (typeof tags === 'function') {
-      tags = await tags();
-    }
-
     const { href: url, host: url_host, pathname: url_path, protocol: url_prot } = parseUrl(location.href);
     const { href: ref, host: ref_host } = document.referrer ? parseUrl(document.referrer) : { href: '', host: ''};
 
@@ -37,7 +33,7 @@ class Driplane {
 
     const { width: sw, height: sh } = screen;
 
-    const commonTags = {
+    const body = {
       ua_br,
       ua_br_v,
       ua_os,
@@ -60,14 +56,16 @@ class Driplane {
       beacon: 0,
     };
 
-    const body = {
-      ...commonTags,
-      ...tags
-    };
-
     const endpoint = `${this.server}/events/${event}?api_key=${this.token}`;
 
-    eventQueue.add({ endpoint, event, body });
+    const lazyTags = async () => {
+      if (typeof tags === 'function') {
+        return await tags();
+      }
+      return tags;
+    }
+
+    eventQueue.add({ endpoint, event, body, lazyTags });
   }
 
   async trackPageview(tags = {}) {
@@ -103,8 +101,14 @@ const sendXhr = (endpoint, body) => {
 
 function flushQueue() {
   if (eventQueue.size > 0) {
-    eventQueue.forEach(({ endpoint, event, body }) => {
-      sendBeacon(endpoint, body) || sendXhr(endpoint, body);
+    eventQueue.forEach(async ({ endpoint, event, body, lazyTags }) => {
+      const tags = await lazyTags();
+      const requestBody = {
+        ...body,
+        ...tags,
+      };
+
+      sendBeacon(endpoint, requestBody) || sendXhr(endpoint, requestBody);
     });
 
     eventQueue.clear();
