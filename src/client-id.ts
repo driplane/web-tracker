@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export const clientIdKey = '__drcid';
 
 function isLocalStorageAvailable(){
@@ -26,9 +28,6 @@ export const getClientId = async () => {
 
   if (!clientId) {
     try {
-      // Dynamically import the UUID module to reduce initial load time.
-      const { default: uuidv4 } = await import('https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/esm-browser/v4.js');
-
       clientId = uuidv4();
 
       localStorage.setItem(clientIdKey, `${clientId}`);

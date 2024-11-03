@@ -1,14 +1,14 @@
 import { init } from './event';
-import { getVitals } from './vitals';
 
 const scripts = document?.querySelectorAll<HTMLElement>('script[data-driplane-token]');
 scripts?.forEach(async (script) => {
-  const { driplaneServer, driplaneToken } = script?.dataset;
+  const { driplaneServer: server, driplaneToken: token, driplaneModules = '' } = script?.dataset;
 
-  if (driplaneToken) {
-    const { trackPageview, trackEvent } = init(driplaneToken, driplaneServer);
+  if (token) {
+    const modules = driplaneModules.split(',');
+
+    const { trackPageview } = init({ token, server, modules });
     await trackPageview();
-    trackEvent('page_perf', () => getVitals());
   }
 });
 

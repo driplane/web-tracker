@@ -1,4 +1,5 @@
 import UAParser from 'ua-parser-js';
+import { getClientId } from './client-id';
 
 const ua = new UAParser();
 
@@ -6,8 +7,6 @@ const parseUrl = (url) => new URL(url);
 
 const defaultDriplaneServer = 'https://data.driplane.io';
 const CONTENT_TYPE = 'text/plain';
-
-const eventQueue = new Set<{endpoint: string, event:string, body: Object, lazyTags: () => object}>();
 
 class Driplane {
   server: string;
@@ -18,11 +17,10 @@ class Driplane {
     this.server = server;
   }
   
-  async trackEvent(event, tags: (() => object) | object = {}) {
+  async trackEvent(event: string, tags: object = {}) {
     const { href: url, host: url_host, pathname: url_path, protocol: url_prot } = parseUrl(location.href);
     const { href: ref, host: ref_host } = document.referrer ? parseUrl(document.referrer) : { href: '', host: ''};
 
-    const { getClientId } = await import('./client-id');
     const [ cid, cid_st ] = await getClientId();
 
     const {
@@ -54,24 +52,17 @@ class Driplane {
       cid,
       cid_st,
       beacon: 0,
+      ...tags,
     };
 
     const endpoint = `${this.server}/events/${event}?api_key=${this.token}`;
 
-    const lazyTags = async () => {
-      if (typeof tags === 'function') {
-        return await tags();
-      }
-      return tags;
-    }
-
-    eventQueue.add({ endpoint, event, body, lazyTags });
+    sendBeacon(endpoint, body) || sendXhr(endpoint, body);
   }
 
   async trackPageview(tags = {}) {
     await this.trackEvent('page_view', tags);
   }
-
 }
 
 const sendBeacon = (endpoint, body) => {
@@ -99,41 +90,25 @@ const sendXhr = (endpoint, body) => {
   });
 }
 
-function flushQueue() {
-  if (eventQueue.size > 0) {
-    eventQueue.forEach(async ({ endpoint, event, body, lazyTags }) => {
-      const tags = await lazyTags();
-      const requestBody = {
-        ...body,
-        ...tags,
-      };
-
-      sendBeacon(endpoint, requestBody) || sendXhr(endpoint, requestBody);
-    });
-
-    eventQueue.clear();
-  }
+export interface InitConfig {
+  token: string;
+  server?: string;
+  modules?: string[]
 }
 
-// Report all available metrics whenever the page is backgrounded or unloaded.
-addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden') {
-    flushQueue();
-  }
-});
-
-// NOTE: Safari does not reliably fire the `visibilitychange` event when the
-// page is being unloaded. As a workaround, we also listen for `pagehide`.
-addEventListener('pagehide', flushQueue);
-
-
-export const init = function (token: string, server = defaultDriplaneServer) {
+export const init = function ({ token, server = defaultDriplaneServer, modules = [] }: InitConfig) {
   const driplane = new Driplane(token, server);
+
+  modules.forEach(async (module) => {
+    if (module === 'vitals') {
+      const { initModule } = await import('./modules/vitals.ts');
+      initModule(driplane);
+    }
+  });
+
   return {
     trackPageview: async (tags = {}) => {
       await driplane.trackPageview(tags);
-      // Send pageview events immediately
-      flushQueue();
     },
     trackEvent: async (event, tags = {}) => {
       await driplane.trackEvent(event, tags);

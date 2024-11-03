@@ -16,12 +16,9 @@
     import { init } from './driplane.js';
 
     let trackPageview = () => console.warn('set credentials first');
-
-    document.getElementById('setServer').addEventListener('click', (ev) => {
-      setServer(document.getElementById('server').value);
-    })
-
+    
     document.getElementById('setToken').addEventListener('click', (ev) => {
+      setServer(document.getElementById('server').value);
       trackPageview = (document.getElementById('token').value, document.getElementById('server').value).trackPageview;
     })
 

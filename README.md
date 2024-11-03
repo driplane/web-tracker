@@ -22,7 +22,7 @@ Send page view event programmatically:
 <script type="module">
   import { init } from "https://cdn.jsdelivr.net/npm/@driplane/web@beta/driplane.js";
 
-  const { trackPageview } = init('yourToken');
+  const { trackPageview } = init({ token: 'yourToken' });
 
   window.addEventListener("popstate", (event) => {
     trackPageview();
@@ -31,4 +31,15 @@ Send page view event programmatically:
     // trackPageview({ loggedin: '1'});
   });
 </script>
+```
+
+To automatically track Web Vitals statistics you can init `vitals` module:
+
+```html
+<script
+    data-driplane-token="{YOUR_DRIPLANE_AUTH_TOKEN}"
+    data-driplane-modules="vitals"
+    src="https://cdn.jsdelivr.net/npm/@driplane/web@beta/driplane.js"
+    type="module"
+></script>
 ```
