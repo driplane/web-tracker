@@ -20,6 +20,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Generate Type Definitions
+        run: npm run build:types
       - name: Publish
         run: npx semantic-release
         env:
