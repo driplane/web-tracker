@@ -1,4 +1,4 @@
-import { v4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 export const clientIdKey = '__drcid';
 
@@ -28,10 +28,7 @@ export const getClientId = async () => {
 
   if (!clientId) {
     try {
-      // Dynamically import the UUID module to reduce initial load time.
-      
-
-      clientId = v4();
+      clientId = uuidv4();
 
       localStorage.setItem(clientIdKey, `${clientId}`);
     } catch (error) {

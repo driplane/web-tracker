@@ -10,9 +10,9 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "esbuild src/driplane.ts --bundle --minify --format=esm --outdir=dist",
+    "build": "esbuild src/driplane.ts src/modules/**.ts --bundle --splitting --minify --format=esm --outdir=dist",
     "build:types": "tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir dist",
-    "serve": "esbuild src/driplane.ts --bundle --splitting --format=esm --servedir=demo"
+    "serve": "esbuild src/driplane.ts src/modules/**.ts --bundle --splitting --format=esm --outdir=demo/dist --watch --servedir=demo"
   },
   "repository": {
     "type": "git",
@@ -31,13 +31,13 @@
     "@semantic-release/release-notes-generator": "^12.1.0",
     "@types/ua-parser-js": "^0.7.39",
     "@types/uuid": "^10.0.0",
-    "esbuild": "^0.20.1",
-    "semantic-release": "^23.0.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "esbuild": "^0.24.0",
+    "semantic-release": "^23.0.2"
   },
   "dependencies": {
     "ua-parser-js": "^1.0.37",
-    "uuid": "^9.0.1",
-    "web-vitals": "^3.5.2"
+    "uuid": "^11.0.2",
+    "web-vitals": "^4.2.4"
   }
 }
