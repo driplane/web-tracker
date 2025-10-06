@@ -12,7 +12,7 @@
     "test": "jest",
     "build": "esbuild src/driplane.ts src/modules/**.ts --bundle --minify --format=esm --outdir=dist",
     "build:types": "tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir dist",
-    "serve": "esbuild src/driplane.ts src/modules/**.ts --bundle --splitting --format=esm --outdir=demo/dist --watch --servedir=demo"
+    "serve": "esbuild src/driplane.ts src/modules/**.ts --bundle --format=esm --outdir=demo/dist --watch --servedir=demo"
   },
   "repository": {
     "type": "git",
